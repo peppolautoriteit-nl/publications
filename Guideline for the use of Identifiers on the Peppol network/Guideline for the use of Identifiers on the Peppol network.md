@@ -19,9 +19,16 @@ BIS documents can be found [here](https://docs.peppol.eu/poacc/billing/3.0/codel
 
 The specific scheme that is used can be a de-facto standard within a sector 
 or country, or it can be bilaterally agreed between the sender and the 
-recipient. However, to improve automation and automatic discovery, the 
-amount of data that needs to be bilaterally communicated should be kept as 
-small as possible.
+recipient.
+
+In the Netherlands, the Peppol Authority Specific Requirements (PASR) 
+require that for a Dutch organization, at least the OIN, KvK number, or VAT 
+is published. Identifiers from other schemes may be published as well, as 
+long as at least an OIN, KvK, or VAT-number is published.
+
+But even aside from this requirement, in order to improve automation and 
+automatic discovery, the amount of data that needs to be bilaterally 
+communicated should be kept as small as possible.
 
 Therefore, it’s important that the sending organization knows which 
 identifier scheme(s) to look for on the Peppol network; suppose that a 
@@ -37,7 +44,8 @@ recommendations for Dutch organizations on the Peppol network regarding:
 * the recommended method to derive the routing information from the 
   document context, if it isn't provided by external means (section 5);
 * an explanation of which OIN identifier scheme(s) to use (section 6);
-* TODO: title section 7
+* a section on the case where an organization has multiple service
+  providers or endpoints
 
 
 # 2. Overview of common identifier schemes in the Netherlands
@@ -53,11 +61,8 @@ The common identifiers in the Netherlands are:
 * (Dutch) VAT number, code 9944
 
 Within specific sectors, GLN numbers (code 0088) may also be quite common, 
-but they see very little, if any, use outside of those sectors.Such 
-identifiers should only be used when bilaterally agreed between the sender 
-and the receiver. It should be noted that such use-cases may conflict with 
-the general use of identifiers, especially in automatic discovery 
-scenarios.
+but they see very little, if any, use outside of those sectors.
+
 
 # 3. Identifier scheme(s) to use to publish receiving capabilities
 
@@ -74,17 +79,22 @@ type version.
 The VAT number for organizations in the Netherlands is NL:VAT, with scheme 
 identifier 9944.
 
-The reason to publish the legal registration identifier is that these are 
-well-known within the Netherlands, and are easy to find in publicly 
-available central databases which can be searched by organization name. The 
-reason to publish the VAT number is that these are often used by default in 
-an international context. Publishing both will increase the chance of 
-successful (automatic) discovery of the recipient on the network.
+One of these identifiers must be published, as per the PASR for the Netherlands:
 
-If the recipient has none of these identifiers, the IBAN number (scheme 
-identifier 9918) can be used. This, however, reduces the chance the 
-recipient is found on the network, and may need to be communicated to 
-potential senders.
+> Service providers MUST register end users with at least scheme ID NL:KVK 
+> (0106) or NL:OIN (0190) or NL:VAT (9944). Other identifiers can be 
+> registered simultaneously. In case an end user does not have an NL:KVK, 
+> NL:OIN or NL:VAT identifier and cannot obtain one of these identifiers, 
+> the end user can be registered with other available scheme ID’s like IBAN
+> or GLN.
+
+Aside from the requirement itself, a second reason to publish the legal 
+registration identifier is that these are well-known within the 
+Netherlands, and are easy to find in publicly available central databases 
+which can be searched by organization name. The reason to publish the VAT 
+number is that these are often used by default in an international context. 
+Publishing both will increase the chance of successful (automatic) 
+discovery of the recipient on the network.
 
 A summarized table of these guidelines:
 
@@ -95,7 +105,7 @@ OIN | 0190 & 9954 | Used as primary ID for organizations with OIN
 VAT |  9944 | Used for any VAT-registered organization
 IBAN | 9918 | Used as fallback for organizations without VAT
 
-The publication of these identifiers should be kept synchronized, and 
+In the publication of these identifiers should be kept synchronized, and 
 should not point to different endpoints or contain different metadata 
 properties, so that documents sent to a VAT number are not routed or 
 processed differently than documents sent to a KvK number. The only 
@@ -108,22 +118,6 @@ identifiers are then kept synchronized as well. While publishing multiple
 identifiers does further increase discoverability, it comes with an 
 additional maintenance burden, and a higher chance of erroneous data being 
 published.
-
-There are organizations that intentionally publish multiple identifiers 
-with different metadata properties. One such scenario is that incoming 
-documents can then internally be routed based on the identifier it was sent 
-to, for instance by publishing different GLN or IBAN numbers for different 
-departments. This practice is not recommended, as the correct identifier to 
-use must then be communicated to (potential) senders, and auto-discovery 
-(or a naïve lookup by the sender) may result in documents being routed to 
-the wrong internal systems, or the sender may wrongly assume that the 
-recipient is not reachable on the network.
-
-It is recommended that internal routing is based on other document 
-properties, such as the order reference or the buyer reference. Both within 
-SI-UBL 2.0 and Peppol BIS 3 (the most used document types at time of 
-writing this document) the use of order reference or buyer reference is 
-mandatory.
 
 # 4. Identifier scheme(s) to use when looking up receiving trading entities
 
@@ -193,4 +187,38 @@ type.
 If and when SI-UBL 1.2 is phased out in the future, only the 0190 scheme 
 identifier will be in use.
 
-# 7. Multiple service providers or endpoints and a single central identifier
+# 7. Multiple service providers and endpoints
+
+There are organizations that intentionally publish multiple identifiers 
+with different metadata properties. One such scenario is that incoming 
+documents can then internally be routed based on the identifier it was sent 
+to, for instance by publishing different GLN or IBAN numbers for different 
+departments. Another scenario is large organizations that have mutiple 
+entry points in the Peppol network, such as when different departments or 
+branches have different Peppol Service Providers.
+
+While the practice of publishing mutiple identifiers for different 
+processes is not prohibited, a central identifier for the entire 
+organization must still be published to comply with the PASR.
+
+Before the PASR requirement, the recommendation for such cases was to not 
+publish a central identifier, but to use more specific identifiers (such as 
+GLN) and bilaterally exchange those identifiers with suppliers. Any 
+documents would be delivered to the right endpoints, but this approach 
+would also stop other organizations from automatically finding them on the 
+network. That scenario prevents a Peppol-first approach, or automatic 
+discovery in general.
+
+On the other hand, publishing a central identifier when multiple endpoints 
+are in use, as is now required, can also introduce problems. Senders that 
+use automatic discovery will send their document to the endpoint of the 
+central identifier, and not the endpoint of the more specific identifier.
+
+This means that organizations that can be reached on different endpoints 
+should have an internal method to reroute documents in the organization. 
+The recommended field to base such internal routing on is 
+`cac:PartyIdentification/cbc:ID`.
+
+How such internal routing is implemented is beyond the scope of this 
+guideline, as this is entirely dependent on the architecture of the local 
+systems.
