@@ -177,21 +177,25 @@ maintains it own extended identifier scheme list (marked by the number
 starting with 99), and the OIN scheme identifier in that list was 9954.
 
 When SI-UBL 2.0 and Peppol BIS 3 were published, 0190 had been registered, 
-and could be used with these documents.
+and could be used with these documents, but code lists in older document 
+types would not be updated anymore.
 
-Therefore, the identifier scheme to use for OIN is:
+SI-UBL 1.2 is no longer mandatory, but if an OIN recipient still published 
+support for it, they should be published with both 0190 (for Peppol BIS 3 
+and SI-UBL 2.0) and 9954 (for SI-UBL 1.2 documents) identifier schemes. 
+When looking up recipients, whether to use 0190 or 9954 must be based on 
+the document type.
+
+While publishing all document types for both identifier schemes would not 
+hurt in and of itself, there is no valid Peppol BIS document with an 9954 
+identifier, since it was removed from the EAS code list. Conversely, the 
+textual code for 0190 in SI-UBL 1.2 would be NL:OINO, not NL:OIN, so 9954 
+remains the commonly used code for the contents of 1.2 documents.
+
+Therefore, the recommended identifier scheme to use for OIN is:
 
 * 0190 with Peppol BIS 3 and SI-UBL 2.0 documents (and later)
 * 9954 with SI-UBL 1.2 documents
-
-Since all three of these document types are currently in use, OIN 
-recipients must be published with both 0190 (for Peppol BIS 3 and SI-UBL 
-2.0) and 9954 (for SI-UBL 1.2 documents) identifier schemes. When looking 
-up recipients, whether to use 0190 or 9954 must be based on the document 
-type.
-
-If and when SI-UBL 1.2 is phased out in the future, only the 0190 scheme 
-identifier will be in use.
 
 # 7. Multiple service providers and endpoints
 
