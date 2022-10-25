@@ -103,6 +103,7 @@ Identifier | SchemeID | How to use
 KVK | 0106 | Used as primary ID for organizations without OIN
 OIN | 0190 & 9954 | Used as primary ID for organizations with OIN
 VAT |  9944 | Used for any VAT-registered organization
+GLN | 0088 | Used as fallback for organizations without VAT
 IBAN | 9918 | Used as fallback for organizations without VAT
 
 In the publication of these identifiers should be kept synchronized, and 
@@ -121,15 +122,20 @@ published.
 
 # 4. Identifier scheme(s) to use when looking up receiving trading entities
 
-Since most organizations in the Netherlands have either a KvK- or 
-OIN-number, these identifiers should be the default. However, in a small 
-number of cases, an organization might not have a KvK- or OIN-number.
+When finding a government organization on the network, the first identifier 
+that should be tried is their OIN number. The purchasing condition of Dutch 
+central government contracts require that the OIN number is used in 
+invoices, so it follows that this is also the best default for lookups.
 
-Therefore, to maximize the chance that a recipient is found on the network, 
-it is recommended that a sender first checks whether the KvK- or OIN-number 
-of the recipient exists on the network. If it cannot be found, it is 
-recommended that the (Dutch) VAT number is checked, followed by any other 
-identifiers that are known to the sending party.
+For Dutch companies, the KvK number should be the default, followed by the 
+VAT number, unless there is a bilateral agreement to use a different 
+identifier.
+
+This makes the list of automatic recipient discovery as follows:
+1. OIN
+2. KvK
+3. VAT
+4. Any other known identifier from the scheme identifier list
 
 # 5. Deriving the recipient’s identifier from Peppol BIS documents
 
@@ -153,12 +159,12 @@ priority.
 1. `cac:PartyLegalEntity/cbc:CompanyID`: While this field may only contain 
    official ISO ICD scheme values, it is the field where the KvK- and 
    OIN-number is used.
-2. `cac:PartyIdentification/cbc:ID`: This field is optional, but it may 
+2. `cac:PartyTaxScheme/cbc:CompanyID`: If the VAT number starts with NL, the
+   Dutch VAT scheme (9944) could be used with this value.
+3. `cac:PartyIdentification/cbc:ID`: This field is optional, but it may 
    contain a scheme and identifier as well. This field can contain the full 
-   Peppol list of identifier schemes, including VAT and GLN.
-3. `cac:PartyTaxScheme/cbc:CompanyID`: If the VAT number starts with NL, the
-   Dutch VAT scheme (9944) could be used with this value. This is only 
-   recommended if none of the earlier identifiers were sufficient.
+   Peppol list of identifier schemes, including VAT and GLN. It can also be 
+   used to further route a document within a receiving organization.
 
 # 6. Identifier schemes for OIN numbers
 
