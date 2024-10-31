@@ -1,3 +1,10 @@
+# Guideline for the implementation of an external party in a Peppol process
+
+This document provides a guideline for implementing an external party within a Peppol process, offering a structured approach to integrate third-party verification or processing of invoices. 
+It presents three main scenarios for incorporating external parties, allowing flexibility based on the needs and technical capabilities of both customers and service providers. 
+Each scenario includes considerations around control, automation, and potential technical challenges. However, it’s essential to note that this guideline is not exhaustive; 
+each implementation must strictly comply with the Peppol Interoperability Framework to ensure consistent and secure data exchange across the network.
+
 ## Scenario 1: Customer receives invoice and forwards it to the external party
 
 #### Description
